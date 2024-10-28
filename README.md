@@ -13,5 +13,5 @@ Go fue el lenguaje utilizado tanto para los TDA's como para los trabajos prácti
 - Diccionarios: Hash y Arbol Binario de Busqueda.
 
 ## TP's
-1-  Rerepolez
-2-  Algogram
+-  TP1: Rerepolez
+-  TP2: Algogram
