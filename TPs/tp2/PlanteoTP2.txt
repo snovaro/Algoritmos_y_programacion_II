@@ -1,0 +1,63 @@
+Heap:
+CrearHeap = O(1)
+CrearHeapArr = O(n)
+Heapsort = O(nlogn)
+Encolar, Desencolar = O(log(n))
+VerMax, EstaVacia, Cantidad = O(1)
+
+Hash:
+Guardar, Pertenece, Borrar, Obtener, Cantidad = O(1)
+Iterar(func(clave K, dato V) bool) = O(n)
+Iterador() IterDiccionario[K, V] = O(1)
+VerActual, HaySiguiente, Siguiente = O(1) (se puede iterar n veces)
+
+ABB:
+Guardar, Pertenece, Borrar, Obtener = O(logn)
+Cantidad = O(1)
+Iterar(func(clave K, dato V) bool) = O(n)
+Iterador() IterDiccionario[K, V] = O(1)
+VerActual, HaySiguiente, Siguiente = O(1) (se puede iterar n veces)
+IterarRango(desde *K, hasta *K, visitar func(clave K, dato V) bool)
+IteradorRango(desde *K, hasta *K) IterDiccionario[K, V]
+
+TP2:
+Login: debe funcionar en O(1).
+supongo que es meter los usuarios en un hash (?)
+y despues para el login buscar en el hash y ver si existe o no el usuario ingresado.
+Si existe calculo que creamos un TDA Usuario ¿?
+
+Logout: debe funcionar en O(1).
+Calculo que seria ver si tenemos a alguien como nuestro usuario, y si lo tenemos, eliminarlo
+(Cambiar un bool de true a false e suna opcion).
+
+Publicar Post: debe funcionar en O(ulog(p)), siendo u la cantidad de usuarios
+y p la cantidad de posts que se hayan creado hasta ese momento.
+calculo que cada usuario debe tener una estructura (creo que un heap) en la cual se vera (supongo que
+como funcion de comparacion) la afinidad con respecto al usuario que publica para guardar el post.
+Me imagino al valor para comparar como el modulo de la resta de la posicion del usuario pŕincipal menos 
+la posicion del que publica, de modo que para comparar dos elementos se hace con un heap de minimos, ya que
+el modulo menor seran los mas cercanos (ademas como se deben colocar por debajo aquellos que tengan el mismo
+nivel de prioridad pero se publiquen despues, supongoq eu habra que ver si hay que poner <= o solo <)
+
+Por cada usuario necesito una estructura ordenada donde guardar el feed para cada uno y cueste log(p).
+Esta estructura la tengo que poder ir desencolando y siempre sacar el post con mejor afinidad (((HEAP SI O SI)))
+
+
+Ver próximo post en el feed: debe funcionar en O(log(p)).
+Desencolar del heap propio del usuario.
+
+Likear un post: debe funcionar en O(logup), siendo up la cantidad de usuarios
+que likearon anteriormente el post en cuestión. Potencialmente podría valer lo
+mismo que u.
+Puede que haya que tener un TDA Posts en el que se tenga un abb que ordene alfabeticamente los usuarios
+que likeen el post.(calculo que para ordenarlo habria que tener en cuenta como se iteran de forma que
+al mostrar likes salga de forma correcta)
+
+Debe haber una estructura de posts de forma que pueda encontrar rapidamente el post correcto (podria ser un hash
+siendo O(1)) y luego guardar de forma ordenada alfabeticamente el usuario que dio like de una estructura interna
+del propio post. Podria ser un heap con comparacion de strings pero tengo que poder sacar todos los likes en O(up)
+por lo que creo que tendria que ser un ABB.
+
+Mostrar likes: debe funcionar en O(up).
+Seria iterar el abb del post pedido, si el post no pertenece saldra el error (tambien debe saltar error si no
+tiene likes, puede que directamente no se cree el ABB si no hay likes)
