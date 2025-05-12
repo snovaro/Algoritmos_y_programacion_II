@@ -1,0 +1,284 @@
+func (lista Lista[T]) Filter(f func (T) bool) Lista[T]{
+    nuevaLista := CrearListaEnlazada[T]()
+    lista.Iterar(func(elem T)bool{
+        if f(elem){
+            nuevaLista.InsertarUltimo(elem)
+        }
+        return true
+    })
+    return nuevaLista
+}
+
+func MinEliminarParaTodoIguales(arr []T){
+    hash := CrearHash[T, int]()
+    cantMaxApariciones := 0
+    cantActual = 0
+    for _,elem := range arr{
+        if !hash.Pertenece(elem){
+            cantActual = 1
+        }else{
+            cantActual += hash.Obtener(elem)
+        }
+        hash.Guardar(elem, cantActual)
+        if cantActual > cantMaxApariciones{
+            cantMaxApariciones = cantActual
+        }
+    }
+    return len(arr) - cantMaxApariciones // O(n) siendo n la cantidad de elementos en el array
+}
+
+
+
+5ta fecha de examen final – 11/08/2023
+
+
+1. Implementar un algoritmo que reciba un arreglo de n enteros (con n ≥ 3) en el que todos sus elementos son iguales
+salvo 1, y determine (utilizando división y conquista) cual es dicho elemento no repetido. Indicar y justificar la
+complejidad del algoritmo implementado.
+
+func EncontrarDistinto(arr []int){
+    var comun int
+    if arr[0] == arr[2]{
+        comun := arr[0]
+    }else if arr[0] == arr[1]{
+        return arr[2]
+    }else{
+        return arr[0]
+    }
+    if arr[1] != comun{
+        return arr[1]
+    }
+    return encontrarDistintoAux(arr[3:], 0, len(arr)-3, comun)
+}
+
+func encontrarDistintoAux(arr []int, ini int, fin int, comun int) int{
+    if ini == fin{
+        return arr[ini]
+    }
+    medio := (ini + fin)/2
+    if arr[medio] != comun{
+        return arr[medio]
+    }
+    izq := encontrarDistintoAux(arr, ini, medio, comun)
+    der := encontrarDistintoAux(arr, medio+1, fin, comun)
+    if izq != comun{
+        return izq
+    }
+    return der
+}
+
+2. Implementar una función que reciba un arreglo A de n enteros y un número k y devuelva un nuevo arreglo en el que
+para cada posición i de dicho arreglo, contenga el resultado de la multiplicación de los primeros k máximos del arreglo A
+entre las posición [0;i] (incluyendo a i). Las primeras k − 1 posiciones del arreglo a devolver deben tener como valor -1.
+Por ejemplo, para el arreglo [1, 5, 3, 4, 2, 8] y k = 3, el resultado debe ser [-1, -1, 15, 60, 60, 160]. Indicar
+y justificar la complejidad del algoritmo implementado.
+
+func MultiplicaK(arr [int], k int) []int{
+    h := CrearHeap[int](func(a,b int)int{
+        return b-a
+    })
+    auxMultiplicar := 1
+    var arr2 []int
+    for i,elem := range(arr){//O(n)
+        if h.Cantidad < k{//O(logk)
+            h.Encolar(elem)
+            auxMultiplicar *= elem
+        }else if elem > h.VerMax(){//O(logk)
+            auxMultiplicar /=h.Desencolar()
+            h.Encolar(elem)
+            auxMultiplicar *= elem
+        }
+        if i < k{//O(1)
+            arr2[i] = -1
+        }else{
+            arr2[i] = auxMultiplicar
+        }
+    }
+    return arr2
+}
+Complejidad : O(nlogk)
+
+
+
+3. Tenemos un plan de estudios que nos indica las correlatividades de las materias que debemos realizar. Suponer que no
+hay electivas, ni correlativas por cantidad de créditos. Tenemos un alumno, al que llamaremos agus9900, que quiere
+recibirse lo antes posible (es decir, en la mínima cantidad de cuatrimestres). Modelar este problema con grafos, e
+implementar una función que reciba dicho grafo y devuelva una lista de listas, donde en la lista i diga qué materias hay
+que cursar en el i-ésimo cuatrimestre, de tal manera de tomar la menor cantidad de cuatrimestres en recibirse. Por
+supuesto, siempre debe suceder que para toda materia de la lista i, todas sus correlativas deben haberse cursado en
+cuatrimestres anteriores. Pueden asumir que agus9900 es tan genio que aprobó todas las cursadas y todos los finales
+(en el mismo cuatrimestre de haberlas cursado). Indicar y justificar la complejidad del algoritmo implementado en
+función de la cantidad de materias del plan de estudios, y la cantidad de correlatividades.
+
+
+Asumo un grafo dirigido donde los vertices son las materias y las aristas dirigidas desde un Vi a un Vj indican que Vi es una materia necesaria para cursar Vj.
+
+def OrdenTopologicoMateriasFiuba(grafo):
+    diccMaterias = {}
+    maxCuatri = 0
+    for v in grafo.obtener_vertices()://O(V)
+        diccMaterias[v] = 0
+
+    for v in grafo.obtener_vertices:// O(V+E)
+        for w in grafo.adyacentes(v):
+            diccMaterias[w] +=1
+            if diccMaterias[w] > maxCuatri:
+                maxCuatri = diccMaterias[w]
+
+    cuatris = []
+    for i in range(maxCuatri): // O(1)? Dado que se supone que deberia ser una cantidad finita y limitada de cuatrimestres.
+        cuatris.append([])
+
+    for materia in diccMaterias:// O(V)
+        cuatris[diccMaterias[materia]].append(materia)
+
+    return cuatris
+
+Complejidad: O(V+E)
+
+
+4. Implementar un algoritmo que reciba dos cadenas (strings) y determine si son anagramas entre sí. Indicar y justificar
+la complejidad del algortmo implementado.
+
+
+func SonAnagramas(cadena1, cadena2 string) bool{
+    hash := CrearHash[string, int]()
+    cadena1 = cadena1.split()
+    cadena2 = cadena2.split()
+    for _,letra := range cadena1{
+        if !hash.Pertenece(letra){
+            hash.Guardar(letra, 1)
+        }else{
+            hash.Guardar(letra, hash.Obtener(letra)+1)
+        }
+    }
+    for _,letra :=range cadena2{
+        if !hash.Pertenece(letra){
+            return false
+        }
+        cantNueva := hash.Obtener(letra)-1
+        if cantNueva == 0{
+            hash.Borrar(letra)
+        }else{
+            hash.Guardar(letra, cantNueva)
+        }
+    }
+    return hash.EstaVacio()
+}
+
+Complejidad: O(n) siendo n la cantidad de letras de la cadena1, ya que va a guardar las letras de la primera cadena en el hash y despues va a ver como mucho esa cantidad ya que 
+llegado al caso de que la cadena2 sea mas larga, en el momento en que una letra no este en la otra palabra o no este esa cantidad de veces, automaticamente se devolvera false.
+
+
+5. Implementar una primitiva de árbol binario de búsqueda que devuelva un diccionario en el cual las claves sean los
+niveles (int) y los datos sean listas de todos las claves del ABB que se encuentran en dicho nivel. Indicar y justificar la
+complejidad del algoritmo implementado.
+
+
+func (abb *abb[K comparable, V any]) ClavesPorNivel() *Diccionario[int,Lista[K]]{
+    diccPorNivel := CrearHash[int, []K]()
+    if abb == nil{
+        return nil
+    }
+    (abb.raiz).clavesPorNivelAux(&diccPorNivel, 0)
+    return diccPorNivel
+}
+
+
+func (nodo *nodoAbb[K comparable, V any]) clavesPorNIvelAux(dicc *Diccionario[int, Lista[K]], altura int){
+    if nodo == nil{
+        return
+    }
+    altura++
+    if !(*dicc).Pertenece(altura){
+        (*dicc).Guardar(altura, CrearListaEnlazada[K]())
+    }
+    lista := (*dicc).Obtener(altura)
+    lista.InsertarUltimo(nodo.clave)
+    (*dicc).Guardar(altura, lista)
+    (nodo.izq).clavesPorNIvelAux(dicc, altura)
+    (nodo.der).clavesPorNIvelAux(dicc, altura)
+}
+
+
+1.ra fecha de examen final – 15/12/2023
+
+2. Implementar un algoritmo que obtenga la parte entera de la raíz de un número n entero en O (log n). Justificar la
+complejidad de la primitiva implementada.
+
+func RaizParteEntera(n int)int{
+    raiz := 0
+    raizParteEnteraAux(0, n, n, &raiz)
+    return raiz
+}
+
+func raizParteEnteraAux(ini, fin, n int) int{
+    if ini == fin{
+        return ini
+    }
+    medio := (ini+fin)/2
+    if medio*medio == n{
+        return medio
+    }else if medio*medio > n{
+        return raizParteEnteraAux(ini, medio, n)
+    }
+    der := raizParteEnteraAux(medio+1, fin, n)
+    if der*der <= n{
+        return der
+    }
+    return medio
+}
+
+Complejidad: Teorema Maestro: 1T(n/2)+O(1) --> A = 1, B = 2, C = 0
+logB(A) = log2(1) = 0 = C -----> O(n^C log(n)) = O(log(n))
+
+3. Implementar una primitiva para una Cola implementada como una estructura en arreglo (como la vista en clase),
+Filtrar[T](func condicion(T) bool) Cola[T] que devuelva una nueva cola para la cual los elementos de la cola
+original dan true en la función condicion pasada por parámetro. La cola original debe quedar intacta, y los elementos
+de la final deben tener el orden relativo que tenían en la original. Indicar y justificar la complejidad del algoritmo
+implementado.
+
+
+func (cola Cola[T]) Filtrar(condicion func(T)bool) Cola[T]{
+    colaADevolver := CrearColaEnlazada[T]()
+    contador := 0
+    for !cola.EstaVacia(){
+        colaADevolver.Encolar(cola.Desencolar())
+        contador++
+    }
+    for i:=0; i < contador, i++{
+        elem := colaADevolver.Desencolar()
+        cola.Encolar(elem)
+        if condicion(elem){
+            colaADevolver.Encolar(elem)
+        }
+    }
+    return colaADevolver
+}
+O(n) ya que paso por todos los elementos y los encolo y desencolo como maximo 5 veces en total, siendo el 5 una constante despreciable.
+
+4. Implementar un algoritmo que dado un texto, devuelva cuál es la palabra más frecuente del mismo. Indicar y justificar
+la complejidad del algoritmo implementado. Nota: recordar que existe la función split(cadena, separador), que
+funciona en O(m), siendo m el largo de la cadena.
+
+func PalabraMasRepetida(texto string)string{
+    listaTexto := split(texto, " ")//O(m)
+    hash := CrearHash[string, int]()
+    max := 0
+    var MaxPalabra string
+    for _, palabra := range(texto){//O(n)
+        cant := 1
+        if !hash.Pertenece(palabra){
+            hash.Guardar(palabra, cant)
+        }else{
+            cant = hash.Obtener(palabra) + 1
+            hash.Guardar(palabra, cant)
+        }
+        if cant > max{
+            MaxPalabra = palabra    
+        }
+    }
+    return MaxPalabra
+}
+
+O(n) siendo n la cantidad de palabras del texto.
